@@ -41,7 +41,8 @@ resource "null_resource" "delete_ingressgateway" {
   provisioner "local-exec" {
     when = destroy
     # Delete ingressgateway on destroy
-    command = "gcloud compute network-endpoint-groups delete ingressgateway --zone=us-central1-a --quiet"
+    # 의존성 문제 인가 계속 존재 하지 않는 NEG를 지우려고 해서 || exit 0 을 추가함.
+    command = "gcloud compute network-endpoint-groups delete ingressgateway --zone=us-central1-a --quiet || exit 0"
   }
 }
 
