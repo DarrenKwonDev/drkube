@@ -7,5 +7,8 @@
 ## disclaimer
 
 -   terraform 1.4 이후 부터 null_resource가 아니라 terraform_data 사용을 권장하고 있습니다.
+
     -   https://developer.hashicorp.com/terraform/language/resources/terraform-data
     -   그러나 여기서는 그대로 두겠습니다..
+
+-   backend 구성 없습니다. 잠깐 올렸다가 쓰고 내리는 용도입니다.

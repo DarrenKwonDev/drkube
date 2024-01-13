@@ -47,12 +47,17 @@ resource "google_container_cluster" "default" {
     enable_private_nodes = true
     # Allow private cluster Master to be accessible outside of the network
     enable_private_endpoint = false
+
+    # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#master_ipv4_cidr_block
+    # 프라이빗 클러스터를 생성할 때 컨트롤 플레인이 사용할 프라이빗 네트워크 범위
+    # 내부 로드 밸런서를 위한 가상 IP(VIP) 주소도 이 범위에서 할당됩니다.
     master_ipv4_cidr_block  = "172.16.0.16/28"
   }
 
+  # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#nested_ip_allocation_policy
   ip_allocation_policy {
-    cluster_ipv4_cidr_block  = "5.0.0.0/16"
-    services_ipv4_cidr_block = "5.1.0.0/16"
+    cluster_ipv4_cidr_block  = "5.0.0.0/16" # pod network CIDR
+    services_ipv4_cidr_block = "5.1.0.0/16" # service network CIDR
   }
 
   default_snat_status {
@@ -61,11 +66,14 @@ resource "google_container_cluster" "default" {
     disabled = true
   }
 
+  # 마스터 노드(컨트롤 플레인)에 대한 네트워크 접근 제어
+  # 어떤 IP 주소 범위에서 클러스터의 마스터 노드에 접근할 수 있는지 제어
   master_authorized_networks_config {
     cidr_blocks {
-      # Because this is a private cluster, need to open access to the Master nodes in order to connect with kubectl
+      # private cluster라 kubectl의 접근을 위해서 모두 열어둠.
+      # 나중에 특정 ip만 제한해도 될 듯.
       cidr_block   = "0.0.0.0/0"
-      display_name = "World"
+      display_name = "anywhere"
     }
   }
 }
